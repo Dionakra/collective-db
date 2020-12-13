@@ -2,7 +2,7 @@ name: Auto update DB
 on:
   push:
   schedule:
-    - cron: '0 12 1/1 * *'
+    - cron: '15 19 * * MON,THU'
 
 jobs:
   run:
