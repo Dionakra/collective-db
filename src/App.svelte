@@ -112,7 +112,7 @@
         elements
       </p>
       <div class="flex flex-col my-2">
-        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="-my-2 flex justify-center overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
             <div
               class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -126,7 +126,7 @@
                     </th>
                     <th
                       scope="col"
-                      class="pl-2 py-3 text-left text-md font-medium text-gray-700 uppercase tracking-wider">
+                      class="pl-4 py-3 text-left text-md font-medium text-gray-700 uppercase tracking-wider">
                       Description
                     </th>
                   </tr>
@@ -151,7 +151,7 @@
                         </div>
                       </td>
                       <td class="pr-6 py-4 whitespace-normal">
-                        <div class="text-md text-gray-900 ml-2">
+                        <div class="text-md text-gray-900 ml-4">
                           {@html collective.description}
                         </div>
                       </td>
