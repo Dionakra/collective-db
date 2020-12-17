@@ -1,8 +1,7 @@
 name: Auto update DB
 on:
-  push:
   schedule:
-    - cron: '15 19 * * MON,THU'
+    - cron: '15 18 * * MON,THU'
 
 jobs:
   run:
@@ -21,7 +20,7 @@ jobs:
         run: npm install
 
       - name: Run the update
-        run: node index.js
+        run: npm run extract
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v5

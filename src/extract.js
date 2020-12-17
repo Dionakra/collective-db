@@ -1,8 +1,9 @@
 const axios = require("axios")
 const fs = require("fs")
 
-const dbFile = "./collectives.json"
+const dbFile = `${__dirname}/../docs/collectives.json`
 const THRESHOLD = 10
+const GRACE_TIME = 2000
 
 updateCollectiveDb()
 
@@ -29,7 +30,7 @@ async function updateCollectiveDb() {
       console.error("  No more issues until now")
       pendingIssues = false
     }
-    await sleep(2000)
+    await sleep(GRACE_TIME)
   }
 }
 

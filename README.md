@@ -3,14 +3,22 @@ Little web app that scrapes from time to time the awesome [Collective Series by 
 
 For those who don't know what this is, Collective is an initiative brought by the same people from [Codrops](https://tympanus.net/codrops/) where twice a week, they curate a list of the latest news and resources from the web design & web development community.
 
+## Prerequisites
+* NodeJS v14.15.2 LTS (at least).
 
-## Task List
-* [x] Scrape all the content to a JSON.
-* [x] Make the JSON with all the content fully available so whoever wants this information doesn't need to scrape everything again.
-* [x] Automatize the extraction with a GitHub action that, every Monday and Thursday (days that Codrops launch a new issue), the content gets scraped and updated.
-* [x] Provide some web app that allows any user to search for any content.
-* [ ] Provide, for a given keyword, the density of popularity of the given keyword through time, so a "trend system" can be extracted from it.
+## Installation
+You will only need to download the repo code and the required dependencies.
+```sh
+$ git clone https://github.com/Dionakra/collective-db.git
+$ cd collective-db
+$ npm install
+```
 
-## Web App
-A web app can be found with this repo as well. In the `main` branch you can find the main process, but in the `gh-pages` you will find the source code for the web app.
+## Development
+As almost any JS project out there, you can start developing by starting the web app with the following command, which has all the expected functionalities like Hot Reloading
+```sh
+$ npm run dev
+```
 
+## Build & Deploy
+As the web app is hosted on GitHub Pages, all the content needs to live already built within the repo. To do so, please, prior pushing anything to the repo, run a `npm run extract && npm run build` command so everything is updated once pushed into GitHub Pages.
