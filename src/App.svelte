@@ -4,8 +4,17 @@
   export let searchResult = [];
   export let searchTerm = "";
   export let init = false;
+  export let errMsg = "";
 
   async function search() {
+    errMsg = ""
+    const keywords = searchTerm.split(",").map((s) => s.trim().toLowerCase()).filter(s => s.length > 0)
+
+    if(keywords.length == 0){
+      errMsg = "Please provide at least one keyword.";
+      return;
+    }
+
     if (collectives.length === 0) {
       await fetch("./collectives.json")
         .then((r) => r.json())
@@ -15,7 +24,6 @@
     }
 
     init = true;
-    const keywords = searchTerm.split(",").map((s) => s.trim().toLowerCase());
 
     searchResult = flatMap(collectives, (collective) => {
       return collective.elements.map((element) => {
@@ -89,6 +97,12 @@
       </div>
     </div>
   </div>
+
+  {#if errMsg.length > 0}
+  <p class="text-sm text-center text-gray-600">
+    {errMsg}
+  </p>
+  {/if}
 
   {#if init}
     {#if searchResult.length > 0}
