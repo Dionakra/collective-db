@@ -4,6 +4,7 @@ const fs = require("fs")
 const dbFile = `${__dirname}/../docs/collectives.json`
 const THRESHOLD = 10
 const GRACE_TIME = 2000
+let issueList = []
 
 updateCollectiveDb()
 
@@ -11,6 +12,9 @@ async function updateCollectiveDb() {
   const fileContent = fs.readFileSync(dbFile, "utf-8")
   const collectives = JSON.parse(fileContent).sort((a, b) => a.issue - b.issue)
   let latestIssue = collectives[collectives.length - 1].issue
+
+  // [[url, number]]
+  issueList = await getIssueList()
 
   let pendingIssues = true
   while (pendingIssues) {
@@ -40,6 +44,31 @@ function sleep(ms) {
   })
 }
 
+function getIssueList() {
+  return new Promise(async (resolve, reject) => {
+    const { data } = await axios.get("https://tympanus.net/codrops/collective/#collective-archive")
+    const regex = /ct-latest-right-side.*?href="(.*?)">Collective #(\d*)/gms;
+
+    const elements = []
+
+    let m;
+    while ((m = regex.exec(data)) !== null) {
+      if (m.index === regex.lastIndex) regex.lastIndex++
+
+      const element = []
+      m.forEach((match, groupIndex) => {
+        if (groupIndex != 0) {
+          element[groupIndex - 1] = match.trim()
+        }
+      })
+      elements.push(element)
+    }
+
+    resolve(elements)
+  })
+
+}
+
 // All URLs should follow the same pattern, but it seems it is not the case
 function nextUrl(issueNo) {
   let url = `https://tympanus.net/codrops/collective/collective-${issueNo}/`
@@ -47,6 +76,11 @@ function nextUrl(issueNo) {
     url = "https://tympanus.net/codrops/collective/collective1/"
   } else if (issueNo === 234) {
     url = "https://tympanus.net/codrops/collective/collective/"
+  } if (issueNo >= 789) {
+    const item = issueList.find(issue => parseInt(issue[1]) == issueNo)
+    if (item != undefined) {
+      url = item[0]
+    }
   }
   return url
 }
@@ -69,8 +103,12 @@ function parseBody(body, issueNo) {
 
 function extractIssueDate(body) {
   const DATE_REGEX = /<time pubdate="pubdate">(.*?)<\/time>/ms
-  const dateStr = DATE_REGEX.exec(body)[1]
-  return new Date(dateStr).toISOString().substr(0, 10)
+  const dateStr = DATE_REGEX.exec(body)
+  if (dateStr == null) {
+    return ""
+  } else {
+    return new Date(dateStr[1]).toISOString().substr(0, 10)
+  }
 }
 
 function extractElements(regexData, body) {
@@ -85,7 +123,7 @@ function extractElements(regexData, body) {
     m.forEach((match, groupIndex) => {
       if (groupIndex != 0) {
         const field = regexData.fields[groupIndex - 1]
-        element[field] = match
+        element[field] = match.trim()
       }
     })
     elements.push(element)
@@ -106,9 +144,19 @@ function getBodyRegex(issueNo) {
       regex: /<article>.*?<h2><.*?>(.*?)<\/a>.*?<p>(.*?)<\/p>.*?<a.*?href="(.*?)"/gms,
       fields: ["title", "description", "url"],
     }
-  } else {
+  } else if (issueNo <= 788) {
     return {
       regex: /<article>.*?<h2>.*?<a.*?href="(.*?)".*?>(.*?)<\/a>.*?<p.*?>(.*?)<\/p>.*?<a.*?href="(.*?)"/gms,
+      fields: ["url", "title", "description"]
+    }
+  } else if (issueNo <= 792) {
+    return {
+      regex: /line-height: 2;.*?href="(.*?)".*?>(.*?)<.*?last-child.*?>(.*?)<\/p/gms,
+      fields: ["url", "title", "description"]
+    }
+  } else {
+    return {
+      regex: /last-child.*?href="(.*?)">(.*?)<.*?p class="last.*?>(.*?)<\/p/gms,
       fields: ["url", "title", "description"]
     }
   }
