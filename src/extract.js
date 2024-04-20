@@ -47,7 +47,7 @@ function sleep(ms) {
 function getIssueList() {
   return new Promise(async (resolve, reject) => {
     const { data } = await axios.get("https://tympanus.net/codrops/collective/#collective-archive")
-    const regex = /ct-latest-right-side.*?href="(.*?)">Collective #(\d*)/gms;
+    const regex = /article id="post.*?collective".*?href="(.*?)".*?Collective #(\d+)/gms;
 
     const elements = []
 
@@ -154,9 +154,14 @@ function getBodyRegex(issueNo) {
       regex: /line-height: 2;.*?href="(.*?)".*?>(.*?)<.*?last-child.*?>(.*?)<\/p/gms,
       fields: ["url", "title", "description"]
     }
+  } else if (issueNo < 832) {
+    return {
+      regex: /last-child.*?href="(.*?)".*?>(.*?)<.*?p class="last.*?>(.*?)<\/p/gms,
+      fields: ["url", "title", "description"]
+    }
   } else {
     return {
-      regex: /last-child.*?href="(.*?)">(.*?)<.*?p class="last.*?>(.*?)<\/p/gms,
+      regex: /<h3.*?>.*?<a href="(.*?)".*?>(.*?)<.*?<p.*?>(.*?)<\/p>/gms,
       fields: ["url", "title", "description"]
     }
   }
